@@ -1,3 +1,5 @@
+#include <FS.h>
+#include <SPIFFS.h>
 // ...existing code...
 #include <Arduino.h>
 #include <Adafruit_Sensor.h>
@@ -27,8 +29,8 @@ constexpr uint8_t DHTTYPE = DHT22;
 DHT dht(DHTPIN, DHTTYPE);
 
 // WiFi credentials
-const char* ssid = "S23 Ultra de Mehdi";
-const char* password = "12121212";
+const char* ssid = "Galaxy S25+";
+const char* password = "12345678";
 
 WebServer server(80);
 
@@ -36,48 +38,31 @@ float lastTemperature = NAN;
 float lastHumidity = NAN;
 
 void handleRoot() {
-  String html = "<!DOCTYPE html><html lang=\"fr\">";
-  html += "<head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">";
-  html += "<link rel=\"icon\" href=\"data:,\">";
-  html += "<title>ESP32 Dashboard</title>";
-  html += "<style>\n";
-  html += "body { background: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%); min-height:100vh; margin:0; font-family: 'Segoe UI', 'Roboto', Arial, sans-serif; display:flex; flex-direction:column; align-items:center; justify-content:center; }\n";
-  html += ".card { background: #fff; box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2); border-radius: 20px; padding: 2rem 2.5rem; min-width: 320px; max-width: 90vw; }\n";
-  html += ".title { font-size: 2.2rem; font-weight: 700; color: #0043af; margin-bottom: 1.2rem; letter-spacing: 1px; }\n";
-  html += ".sensor-row { display: flex; align-items: center; justify-content: space-between; margin: 1.2rem 0; font-size: 1.3rem; }\n";
-  html += ".label { color: #555; font-weight: 500; }\n";
-  html += ".value { font-size: 1.5rem; font-weight: 700; color: #2196f3; transition: color 0.3s; }\n";
-  html += ".icon { font-size: 2rem; margin-right: 0.7rem; vertical-align: middle; }\n";
-  html += "@media (max-width: 500px) { .card { padding: 1rem; min-width: 0; } .title { font-size: 1.3rem; } .sensor-row { font-size: 1rem; } .value { font-size: 1.1rem; } }\n";
-  html += "</style>\n";
-  html += "<script>\n";
-  html += "function animateValue(id, newValue, unit) {\n";
-  html += "  const el = document.getElementById(id);\n";
-  html += "  if (!el) return;\n";
-  html += "  if (el.textContent !== newValue + ' ' + unit && !isNaN(newValue)) {\n";
-  html += "    el.style.color = '#43af4a';\n";
-  html += "    setTimeout(() => { el.style.color = '#2196f3'; }, 400);\n";
-  html += "  }\n";
-  html += "  el.textContent = isNaN(newValue) ? 'Erreur' : newValue + ' ' + unit;\n";
-  html += "}\n";
-  html += "function updateData() {\n";
-  html += "  fetch('/data').then(r => r.json()).then(data => {\n";
-  html += "    animateValue('temp', data.temperature, '°C');\n";
-  html += "    animateValue('hum', data.humidity, '%');\n";
-  html += "  });\n";
-  html += "}\n";
-  html += "setInterval(updateData, 2000);\n";
-  html += "window.onload = updateData;\n";
-  html += "</script></head>";
-  html += "<body>";
-  html += "<div class=\"card\">";
-  html += "<div class=\"title\">🌡️ Dashboard ESP32 - DHT22</div>";
-  html += "<div class=\"sensor-row\"><span class=\"icon\">🌡️</span><span class=\"label\">Température</span><span class=\"value\" id=\"temp\">Chargement...</span></div>";
-  html += "<div class=\"sensor-row\"><span class=\"icon\">💧</span><span class=\"label\">Humidité</span><span class=\"value\" id=\"hum\">Chargement...</span></div>";
-  html += "</div>";
-  html += "</body></html>";
-  server.send(200, "text/html", html);
+  File file = SPIFFS.open("/index.html", "r");
+  if (!file) {
+    server.send(500, "text/plain", "index.html not found");
+    return;
+  }
+  server.streamFile(file, "text/html");
+  file.close();
 }
+
+void handleStaticFile(const char* path, const char* contentType) {
+  File file = SPIFFS.open(path, "r");
+  if (!file) {
+    server.send(404, "text/plain", String(path) + " not found");
+    return;
+  }
+  server.streamFile(file, contentType);
+  file.close();
+}
+  // Initialize SPIFFS
+  void initializeSPIFFS() {
+    if (!SPIFFS.begin(true)) {
+      Serial.println("SPIFFS Mount Failed");
+      return;
+    }
+  }
 
 void handleData() {
   String json = "{";
@@ -105,8 +90,11 @@ void setup() {
   digitalWrite(kLedPin, LOW);
 
   Serial.print("Using LED pin: ");
-  Serial.println(kLedPin);
+  // Initialize SPIFFS
+  initializeSPIFFS();
 
+  // Initialize DHT sensor
+  dht.begin();
   // Initialize DHT sensor
   dht.begin();
 
@@ -126,6 +114,8 @@ void setup() {
   // Set up the web server routes
   server.on("/", handleRoot);
   server.on("/data", handleData);
+  server.on("/style.css", [](){ handleStaticFile("/style.css", "text/css"); });
+  server.on("/script.js", [](){ handleStaticFile("/script.js", "application/javascript"); });
   server.begin();
   Serial.println("HTTP server started");
 }
@@ -133,24 +123,25 @@ void setup() {
 void loop() {
   static uint32_t lastToggleMs = 0;
   static bool ledIsOn = false;
+  static uint32_t lastSensorMs = 0;
   const uint32_t now = millis();
 
+  // Blink LED (unchanged)
   if (now - lastToggleMs >= kBlinkIntervalMs) {
     lastToggleMs = now;
     ledIsOn = !ledIsOn;
     digitalWrite(kLedPin, ledIsOn ? HIGH : LOW);
-
     Serial.print("LED ");
     Serial.println(ledIsOn ? "ON" : "OFF");
-    delayMillis(10);
   }
 
-  // Read humidity and temperature from the sensor
-  lastHumidity = dht.readHumidity();
-  lastTemperature = dht.readTemperature();
+  // Non-blocking sensor read every 2 seconds
+  if (now - lastSensorMs >= 2000) {
+    lastSensorMs = now;
+    lastHumidity = dht.readHumidity();
+    lastTemperature = dht.readTemperature();
+  }
 
-  // Handle web server requests
+  // Handle web server requests as fast as possible
   server.handleClient();
-
-  delayMillis(2000); // Wait 2 seconds before next read
 }

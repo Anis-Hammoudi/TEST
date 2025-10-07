@@ -1,0 +1,53 @@
+body {
+  background: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
+  min-height:100vh;
+  margin:0;
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+.card {
+  background: #fff;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+  border-radius: 20px;
+  padding: 2rem 2.5rem;
+  min-width: 320px;
+  max-width: 90vw;
+}
+.title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #0043af;
+  margin-bottom: 1.2rem;
+  letter-spacing: 1px;
+}
+.sensor-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 1.2rem 0;
+  font-size: 1.3rem;
+}
+.label {
+  color: #555;
+  font-weight: 500;
+}
+.value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2196f3;
+  transition: color 0.3s;
+}
+.icon {
+  font-size: 2rem;
+  margin-right: 0.7rem;
+  vertical-align: middle;
+}
+@media (max-width: 500px) {
+  .card { padding: 1rem; min-width: 0; }
+  .title { font-size: 1.3rem; }
+  .sensor-row { font-size: 1rem; }
+  .value { font-size: 1.1rem; }
+}
