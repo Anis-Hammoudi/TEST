@@ -4,14 +4,39 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="data:,">
+<<<<<<< HEAD
   <title>ESP32 Dashboard</title>
+=======
+  <title>ESP32 Pot Connecte</title>
+>>>>>>> mehdi
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="card">
+<<<<<<< HEAD
     <div class="title">🌡️ Dashboard ESP32 - DHT22</div>
     <div class="sensor-row"><span class="icon">🌡️</span><span class="label">Température</span><span class="value" id="temp">Chargement...</span></div>
     <div class="sensor-row"><span class="icon">💧</span><span class="label">Humidité</span><span class="value" id="hum">Chargement...</span></div>
+=======
+    <h1 class="title">Tableau de bord pot connecte</h1>
+    <div class="status-row">
+      <span class="label">Etat du pot</span>
+      <span class="status-badge status-unknown" id="status">Inconnu</span>
+    </div>
+    <div class="sensor-row">
+      <span class="label">Temperature</span>
+      <span class="value" id="temp">Chargement...</span>
+    </div>
+    <div class="sensor-row">
+      <span class="label">Humidite</span>
+      <span class="value" id="hum">Chargement...</span>
+    </div>
+    <div class="status-row">
+      <span class="label">Alarme buzzer</span>
+      <span class="status-badge status-buzzer-off" id="buzzer">Inactif</span>
+    </div>
+    <button class="action-btn" id="blueButton" type="button">Allumer la LED bleue</button>
+>>>>>>> mehdi
   </div>
   <script src="script.js"></script>
 </body>
