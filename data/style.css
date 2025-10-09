@@ -1,0 +1,136 @@
+body {
+  background: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
+  min-height: 100vh;
+  margin: 0;
+  font-family: "Segoe UI", "Roboto", Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #1f2933;
+}
+
+.card {
+  background: #fff;
+  box-shadow: 0 10px 35px rgba(15, 23, 42, 0.15);
+  border-radius: 20px;
+  padding: 2.2rem 2.6rem;
+  min-width: 320px;
+  max-width: 420px;
+  width: calc(100% - 2rem);
+}
+
+.title {
+  font-size: 1.9rem;
+  margin: 0 0 1.5rem 0;
+  color: #003c8f;
+}
+
+.status-row,
+.sensor-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.label {
+  font-weight: 600;
+}
+
+.value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1e88e5;
+  transition: color 0.3s;
+}
+
+.value-error {
+  color: #d32f2f;
+}
+
+.value-blink {
+  color: #2e7d32;
+}
+
+.status-badge {
+  padding: 0.25rem 0.9rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: #d1d5db;
+  color: #1f2933;
+}
+
+.status-optimal {
+  background: #c7f5d9;
+  color: #0f5132;
+}
+
+.status-warning {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status-alert {
+  background: #f8d7da;
+  color: #842029;
+}
+
+.status-buzzer-on {
+  background: #fde68a;
+  color: #92400e;
+}
+
+.status-buzzer-off {
+  background: #e0e7ff;
+  color: #1e3a8a;
+}
+
+.action-btn {
+  margin-top: 1.5rem;
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  border: none;
+  background: #1e88e5;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.action-btn:hover:not(:disabled) {
+  background: #1669bb;
+}
+
+.action-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.action-btn:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.action-btn.btn-on {
+  background: #0f766e;
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 1.5rem 1.7rem;
+    min-width: 0;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .value {
+    font-size: 1.2rem;
+  }
+}
