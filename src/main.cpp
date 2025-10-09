@@ -13,16 +13,16 @@ DHT dht(kDhtPin, kDhtType);
 
 // Status LEDs (active LOW: LED on when pin is driven LOW)
 constexpr uint8_t kLedGreenPin = 12;  // D12 -> LED verte (optimal)
-constexpr uint8_t kLedYellowPin = 14; // D14 -> LED orange (warning)
-constexpr uint8_t kLedRedPin = 27;    // D27 -> LED rouge (alert)
-constexpr uint8_t kLedBluePin = 13;
+constexpr uint8_t kLedYellowPin = 27; // D27 -> LED orange (alert)
+constexpr uint8_t kLedRedPin = 14;    // D14 -> LED rouge (warning)
+constexpr uint8_t kLedBluePin = 4;
 
 constexpr uint8_t kBuzzerPin = 33;    // active HIGH
 constexpr uint8_t kButtonPin = 32;    // button to GND, uses internal pull-up
 
 // Wi-Fi credentials (replace with your own)
-const char* ssid = "S23 Ultra de Mehdi";
-const char* password = "12121212";
+const char* ssid = "Galaxy S25+";
+const char* password = "12345678";
 
 WebServer server(80);
 
@@ -31,7 +31,7 @@ float lastHumidity = NAN;
 
 enum class ClimateStatus { Unknown, Optimal, Warning, Alert };
 ClimateStatus currentStatus = ClimateStatus::Unknown;
-bool blueLedState = false;
+bool blueLedState = true;
 bool buzzerState = false;
 
 // Thresholds for plant comfort (tweak for your plant)
@@ -80,9 +80,9 @@ void applyBuzzerState() {
 }
 
 void setStatusLeds(ClimateStatus status) {
-  digitalWrite(kLedGreenPin, status == ClimateStatus::Optimal ? LOW : HIGH);
-  digitalWrite(kLedYellowPin, status == ClimateStatus::Warning ? LOW : HIGH);
-  digitalWrite(kLedRedPin, status == ClimateStatus::Alert ? LOW : HIGH);
+  digitalWrite(kLedGreenPin, status == ClimateStatus::Optimal ? HIGH : LOW);
+  digitalWrite(kLedYellowPin, status == ClimateStatus::Alert ? HIGH : LOW);                               
+  digitalWrite(kLedRedPin, status == ClimateStatus::Warning ? HIGH : LOW);
 }
 
 void updateBuzzerFromReadings() {
